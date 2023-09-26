@@ -10,7 +10,7 @@ Add code to the factor() function to implement this.
 3 <factor> → <number> | pi | -<factor> | (<exp>)
 '''
 
-from numeric import *
+from backend_modules.numeric import *
 #from postfix import *
 #from lisp import *
 #from function import *
