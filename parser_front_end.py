@@ -69,8 +69,16 @@ def factor():
     value = None
 
     # Insert code here to handle (<exp>)
+    if lookahead() == '(': #Look for opening parenthesis
+        read_token()
+        value = exp()
 
-    if lookahead() == 'pi':     # pi
+        if lookahead() == ')': #Look for closing parenthesis
+            read_token()
+        else:
+            raise ParseError('Missing parentheses')
+
+    elif lookahead() == 'pi':     # pi
         read_token()
         return const_pi()
 
