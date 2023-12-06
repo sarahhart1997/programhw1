@@ -9,7 +9,8 @@ Created on Mon Sep 18 19:41:29 2023
 # BACK END PARSER (ACTION RULES)
 #==============================================================
 import math
-op_code = {'+':'ADD', '-':'SUB', '*':'MUL', '/':'DIV'}
+
+op_code = {'+': 'ADD', '-': 'SUB', '*': 'MUL', '/': 'DIV'}
 
 def binary_op(op, lhs, rhs):
     op_name = op_code.get(op, None)
@@ -19,11 +20,13 @@ def binary_op(op, lhs, rhs):
         return None
 
 def unary_op(op, rhs):
-    if op == '-': return rhs + '\nNEG'
-    else: return None
+    if op in {'sin', 'cos', 'sqrt', 'tan', '-'}:
+        return rhs + f'\n{op.upper()}'
+    else:
+        return None
 
 def atomic(x):
     return '\n' + 'PUSH ' + x
 
 def const_pi():
-    return '\nPUSH PI'
+    return '\n' + 'PUSH PI'

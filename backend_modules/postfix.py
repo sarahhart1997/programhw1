@@ -12,11 +12,11 @@ Created on Mon Sep 18 19:42:11 2023
 def binary_op(op, lhs, rhs):
     return lhs + ' ' + rhs + ' ' + op
 
-def atomic(x): # should test for valid number or identifier
+def atomic(x):  # should test for valid number or identifier
     return x
 
 def const_pi():
     return 'PI'
 
 def unary_neg(x):
-    return '~'
+    return '~'  # Assuming '~' is the symbol for negation in postfix notation

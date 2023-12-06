@@ -11,10 +11,10 @@ Add code to the factor() function to implement this.
 '''
 
 from backend_modules.numeric import *
-#from postfix import *
-#from lisp import *
-#from function import *
-#from stack import *
+# from postfix import *
+# from lisp import *
+# from function import *
+# from stack import *
 
 class ParseError(Exception):
     def __init__(self, err):
@@ -24,14 +24,19 @@ class ParseError(Exception):
 # FRONT END PARSER
 #==============================================================
 
-token_index = 0 # keeps track of what character we are currently reading.
+token_index = 0  # keeps track of what character we are currently reading.
 
-def lookahead(): return w[token_index]
+
+def lookahead():
+    return w[token_index]
+
 
 def read_token():
     global token_index
     token_index += 1
-#---------------------------------------
+
+
+# ---------------------------------------
 # Parse an Expression   <exp> → <term>{+<term> | -<term>}
 #
 def exp():
@@ -46,7 +51,9 @@ def exp():
         else:
             break
     return value
-#---------------------------------------
+
+
+# ---------------------------------------
 # Parse a Term   <term> → <factor>{+<factor> | -<factor>}
 #
 def term():
@@ -61,76 +68,90 @@ def term():
         else:
             break
     return value
-#---------------------------------------
-# Parse a Factor   <factor> → (<exp>) | <number>
+
+
+# ---------------------------------------
+# Parse a Factor   <factor> → (<exp>) | <number> | <function>(<exp>) | sqrt(<exp>)
 #
 def factor():
     global err
     value = None
 
-    # Insert code here to handle (<exp>)
-    if lookahead() == '(': #Look for opening parenthesis
+    if lookahead() == '(':  # Look for opening parenthesis
         read_token()
         value = exp()
 
-        if lookahead() == ')': #Look for closing parenthesis
+        if lookahead() == ')':  # Look for closing parenthesis
             read_token()
         else:
             raise ParseError('Missing parentheses')
 
-    elif lookahead() == 'pi':     # pi
+    elif lookahead() == 'pi':  # pi
         read_token()
         return const_pi()
 
-    elif lookahead() == '-':    # unary minus
+    elif lookahead() == '-':  # unary minus
         read_token()
         return unary_op('-', factor())
 
-    else:                       # should be a number
+    elif lookahead() in {'sin', 'cos', 'tan', 'sqrt'}:  # trig functions + sqrt
+        func_name = lookahead()
+        read_token()
+        if lookahead() == '(':
+            read_token()
+            inner_expr = exp()
+            if lookahead() == ')':
+                read_token()
+                return unary_op(func_name, inner_expr)
+            else:
+                raise ParseError(f"Expected ')' after the argument of {func_name}")
+        else:
+            raise ParseError(f"Expected '(' after {func_name}")
+
+    else:  # should be a number
         try:
             value = atomic(lookahead())
             read_token()
-        except ValueError:      # it was not
+        except ValueError:  # it was not
             raise ParseError('number expected, found: ' + lookahead())
-
-    #print('factor returning', value)
 
     return value
 
-#==============================================================
+# ==============================================================
 # User Interface Loop
-#==============================================================
+# ==============================================================
 w = input('\nEnter expression: ')
 while w != '':
-    #-------------------------------
+    # -------------------------------
     # Split string into token list.
     #
     for c in '()+-*/':
-        w = w.replace(c, ' '+c+' ')
+        w = w.replace(c, ' ' + c + ' ')
     w = w.split()
-    w.append('$') # EOF marker
+    w.append('$')  # EOF marker
 
-    print('\nToken Stream:     ', end = '')
-    for t in w: print(t, end = '  ')
+    print('\nToken Stream:     ', end='')
+    for t in w:
+        print(t, end='  ')
     print('\n')
 
-    #-------------------------------
+    # -------------------------------
     # Try parsing.
     #
     token_index = 0
     try:
-        print('Value:           ', exp()) # call the parser
+        print('Value:           ', exp())  # call the parser
     except:
         print('parse error')
 
-    #-------------------------------
+    # -------------------------------
     # Show where parsing terminated.
     #
-    print('read | un-read:   ', end = '')
-    for c in w[:token_index]: print(c, end = '')
-    print(' | ', end = '')
-    for c in w[token_index:]: print(c, end = '')
+    print('read | un-read:   ', end='')
+    for c in w[:token_index]:
+        print(c, end='')
+    print(' | ', end='')
+    for c in w[token_index:]:
+        print(c, end='')
     print()
     w = input('\n\nEnter expression: ')
-
-
