@@ -10,6 +10,8 @@ Created on Mon Sep 18 19:25:20 2023
 #==============================================================
 import math
 
+symbol_table = {}
+
 def binary_op(op, lhs, rhs):
     if op == '+':
         return lhs + rhs
@@ -23,7 +25,15 @@ def binary_op(op, lhs, rhs):
         return None
 
 def atomic(x):
-    return float(x)
+    if x.isidentifier():
+        if x in symbol_table:
+            return symbol_table[x]
+        else:
+            raise ParseError(f"Undefined variable: {x}")
+    try:
+        return float(x)
+    except ValueError:
+        raise ParseError('Invalid atomic value: ' + x)
 
 def const_pi():
     return math.pi
@@ -41,3 +51,6 @@ def unary_op(op, x):
         return math.sqrt(x)
     else:
         return None
+
+def assign(var, value):
+    symbol_table[var] = value
